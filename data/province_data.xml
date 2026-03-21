@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo >
+    <data>
+
+
+<!--    <record id="province_hanoi" model="province">-->
+<!--        <field name="name">Hà Nội</field>-->
+<!--    </record>-->
+
+<!--    <record id="province_danang" model="province">-->
+<!--        <field name="name">Đà Nẵng</field>-->
+<!--    </record>-->
+
+<!--    <record id="province_hue" model="province">-->
+<!--        <field name="name">Huế</field>-->
+<!--    </record>-->
+
+<!--    <record id="province_haiphong" model="province">-->
+<!--        <field name="name">Hải Phòng</field>-->
+<!--    </record>-->
+
+
+    </data>
+</odoo>

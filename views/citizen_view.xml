@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="citizen" model="ir.ui.view">
+            <field name="name">citizen.form</field>
+            <field name="model">citizen</field>
+            <field name="arch" type="xml">
+                <form string="Citizen">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name" placeholder="Citizen Name..."/></h1>
+                        </div>
+                        <group>
+                            <group string="Address">
+                                <field name="province_id"/>
+                                <field name="district_domain" invisible="1"/>
+                                <field name="ward_domain" invisible="1"/>
+                                <field name="district_id" domain="district_domain"/>
+                                <field name="ward_id" domain="ward_domain"/>
+                            </group>
+                            <group string="Other Info">
+                                <field name="birth_province_id"/>
+                                <field name="work_province_id"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="citizen_list" model="ir.ui.view">
+            <field name="name">citizen.list</field>
+            <field name="model">citizen</field>
+            <field name="arch" type="xml">
+                <list string="Citizens" default_order="create_date desc">
+                    <field name="name"/>
+                    <field name="province_id"/>
+                    <field name="district_id"/>
+                    <field name="ward_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_citizen" model="ir.actions.act_window">
+            <field name="name">Citizens</field>
+            <field name="res_model">citizen</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="menu_citizen"
+                  name="Citizens"
+                  parent="menu_equipment_requests"
+                  action="action_citizen"
+                  sequence="5"/>
+    </data>
+</odoo>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="student_exam" model="ir.ui.view">
+            <field name="name">student.exam.form</field>
+            <field name="model">student.exam</field>
+            <field name="arch" type="xml">
+                <form string="Student Exam">
+                    <header>
+                        <button name="%(action_exam_report)d"
+                                type="action"
+                                string="Print Report"
+                                class="btn-primary"/>
+                        <button name="action_export_excel"
+                                type="object"
+                                string="Export Excel"
+                                class="btn-success"/>
+                        <button name="action_import_excel"
+                                type="object"
+                                string="Import Excel"
+                                class="btn-primary"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name" placeholder="Exam Name..."/></h1>
+                        </div>
+                        <group>
+                            <group string="Student Info">
+                                <field name="student_name"/>
+                                <field name="exam_date"/>
+                            </group>
+                            <group string="Result">
+                                <field name="score"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Subjects">
+                                <field name="line_ids">
+                                    <list editable="bottom">
+                                        <field name="subject"/>
+                                        <field name="score"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="student_exam_list" model="ir.ui.view">
+            <field name="name">student.exam.list</field>
+            <field name="model">student.exam</field>
+            <field name="arch" type="xml">
+                <list string="Student Exams" default_order="create_date desc">
+                    <field name="name"/>
+                    <field name="student_name"/>
+                    <field name="exam_date"/>
+                    <field name="score"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_student_exam" model="ir.actions.act_window">
+            <field name="name">Student Exams</field>
+            <field name="res_model">student.exam</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="menu_student_exam"
+                  name="Student Exams"
+                  parent="menu_equipment_requests"
+                  action="action_student_exam"
+                  sequence="22"/>
+    </data>
+</odoo>

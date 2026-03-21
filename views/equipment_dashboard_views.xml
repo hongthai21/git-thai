@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- ============================================================ -->
+        <!--               DASHBOARD OVERVIEW (Kanban)                    -->
+        <!-- ============================================================ -->
+        <record id="view_equipment_dashboard_kanban" model="ir.ui.view">
+            <field name="name">equipment.request.dashboard.kanban</field>
+            <field name="model">equipment.request</field>
+            <field name="priority">99</field>
+            <field name="arch" type="xml">
+                <kanban class="o_equipment_dashboard_kanban"
+                        create="false"
+                        group_create="false"
+                        records_draggable="false"
+                        sample="1">
+                    <field name="state"/>
+                    <field name="priority"/>
+                    <field name="is_overdue"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="eq_dashboard_card eq_dash_total"
+                                 t-if="record.state.raw_value == 'draft'">
+                                <div class="eq_dash_icon">
+                                    <i class="fa fa-pencil-square-o"/>
+                                </div>
+                                <div class="eq_dash_number"><field name="name"/></div>
+                                <div class="eq_dash_label">Draft Request</div>
+                            </div>
+                            <div class="eq_dashboard_card eq_dash_pending"
+                                 t-if="record.state.raw_value == 'confirmed' or record.state.raw_value == 'manager_approved'">
+                                <div class="eq_dash_icon">
+                                    <i class="fa fa-clock-o"/>
+                                </div>
+                                <div class="eq_dash_number"><field name="name"/></div>
+                                <div class="eq_dash_label">Pending Approval</div>
+                            </div>
+                            <div class="eq_dashboard_card eq_dash_approved"
+                                 t-if="record.state.raw_value == 'director_approved' or record.state.raw_value == 'done' or record.state.raw_value == 'assigned'">
+                                <div class="eq_dash_icon">
+                                    <i class="fa fa-check-circle"/>
+                                </div>
+                                <div class="eq_dash_number"><field name="name"/></div>
+                                <div class="eq_dash_label">Approved / Done</div>
+                            </div>
+                            <div class="eq_dashboard_card eq_dash_overdue"
+                                 t-if="record.state.raw_value == 'refused'">
+                                <div class="eq_dash_icon">
+                                    <i class="fa fa-times-circle"/>
+                                </div>
+                                <div class="eq_dash_number"><field name="name"/></div>
+                                <div class="eq_dash_label">Refused</div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Dashboard Action -->
+        <record id="action_equipment_dashboard" model="ir.actions.act_window">
+            <field name="name">Dashboard</field>
+            <field name="res_model">equipment.request</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="view_id" ref="view_equipment_dashboard_kanban"/>
+            <field name="context">{'search_default_group_state': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No equipment requests found
+                </p>
+                <p>Create your first equipment request to see the dashboard.</p>
+            </field>
+        </record>
+
+        <!-- Dashboard Menu (first item) -->
+        <menuitem id="menu_equipment_dashboard"
+                  name="Dashboard"
+                  parent="equipment_request.menu_equipment_request_root"
+                  action="action_equipment_dashboard"
+                  sequence="0"/>
+    </data>
+</odoo>

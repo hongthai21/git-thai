@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_equipment_request_user,equipment.request.user,model_equipment_request,,1,1,1,1
+access_equipment_request_line_user,equipment.request.line.user,model_equipment_request_line,,1,1,1,1
+access_equipment_category_user,equipment.category.user,model_equipment_category,,1,1,1,1
+access_department_budget_user,department.budget.user,model_department_budget,,1,1,1,1
+access_province,access_province,model_province,,1,1,1,1
+access_district,access_district,model_district,,1,1,1,1
+access_ward,access_ward,model_ward,,1,1,1,1
+access_citizen,access_citizen,model_citizen,,1,1,1,1
+access_student_exam,student.exam,model_student_exam,,1,1,1,1
+access_student_exam_line,access_student_exam_line,model_student_exam_line,,1,1,1,1
+access_import_excel_wizard,access_import_excel_wizard,model_import_excel_wizard,,1,1,1,1
+access_import_excel_line,access_import_excel_line,model_import_excel_line,,1,1,1,1
+access_bulk_action_wizard,access_bulk_action_wizard,model_equipment_bulk_action_wizard,,1,1,1,1

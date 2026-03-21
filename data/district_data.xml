@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo >
+    <data>
+
+    <!-- Hà Nội -->
+
+<!--    <record id="district_badinh" model="district">-->
+<!--        <field name="name">Ba Đình</field>-->
+<!--        <field name="province_id" ref="province_management.province_hanoi"/>-->
+<!--    </record>-->
+
+<!--    <record id="district_hoankiem" model="district">-->
+<!--        <field name="name">Hoàn Kiếm</field>-->
+<!--        <field name="province_id" ref="province_management.province_hanoi"/>-->
+<!--    </record>-->
+
+<!--    <record id="district_dongda" model="district">-->
+<!--        <field name="name">Đống Đa</field>-->
+<!--        <field name="province_id" ref="province_management.province_hanoi"/>-->
+<!--    </record>-->
+
+<!--    <record id="district_caugiay" model="district">-->
+<!--        <field name="name">Cầu Giấy</field>-->
+<!--        <field name="province_id" ref="province_management.province_hanoi"/>-->
+<!--    </record>-->
+
+
+<!--    &lt;!&ndash; Đà Nẵng &ndash;&gt;-->
+
+<!--    <record id="district_haichau" model="district">-->
+<!--        <field name="name">Hải Châu</field>-->
+<!--        <field name="province_id" ref="province_management.province_danang"/>-->
+<!--    </record>-->
+
+<!--    <record id="district_thanhkhe" model="district">-->
+<!--        <field name="name">Thanh Khê</field>-->
+<!--        <field name="province_id" ref="province_management.province_danang"/>-->
+<!--    </record>-->
+
+<!--    <record id="district_lienchieu" model="district">-->
+<!--        <field name="name">Liên Chiểu</field>-->
+<!--        <field name="province_id" ref="province_management.province_danang"/>-->
+<!--    </record>-->
+
+
+<!--    &lt;!&ndash; Huế &ndash;&gt;-->
+
+<!--    <record id="district_phuvang" model="district">-->
+<!--        <field name="name">Phú Vang</field>-->
+<!--        <field name="province_id" ref="province_management.province_hue"/>-->
+<!--    </record>-->
+
+<!--    <record id="district_phuloc" model="district">-->
+<!--        <field name="name">Phú Lộc</field>-->
+<!--        <field name="province_id" ref="province_management.province_hue"/>-->
+<!--    </record>-->
+
+<!--    <record id="district_huongthuy" model="district">-->
+<!--        <field name="name">Hương Thủy</field>-->
+<!--        <field name="province_id" ref="province_management.province_hue"/>-->
+<!--    </record>-->
+
+
+<!--    &lt;!&ndash; Hải Phòng &ndash;&gt;-->
+
+<!--    <record id="district_hongbang" model="district">-->
+<!--        <field name="name">Hồng Bàng</field>-->
+<!--        <field name="province_id" ref="province_management.province_haiphong"/>-->
+<!--    </record>-->
+
+<!--    <record id="district_ngoquyen" model="district">-->
+<!--        <field name="name">Ngô Quyền</field>-->
+<!--        <field name="province_id" ref="province_management.province_haiphong"/>-->
+<!--    </record>-->
+
+<!--    <record id="district_lechan" model="district">-->
+<!--        <field name="name">Lê Chân</field>-->
+<!--        <field name="province_id" ref="province_management.province_haiphong"/>-->
+<!--    </record>-->
+
+
+    </data>
+</odoo>

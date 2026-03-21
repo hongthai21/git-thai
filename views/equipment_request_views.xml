@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- ============================================================ -->
+        <!--                        SEARCH VIEW                           -->
+        <!-- ============================================================ -->
+        <record id="view_equipment_request_search" model="ir.ui.view">
+            <field name="name">equipment.request.search</field>
+            <field name="model">equipment.request</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Reference"/>
+                    <field name="employee_name"/>
+                    <field name="equipment_name"/>
+                    <field name="department"/>
+                    <field name="category_id"/>
+                    <separator/>
+                    <filter string="My Requests" name="my_requests" domain="[('create_uid', '=', uid)]"/>
+                    <separator/>
+                    <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Confirmed" name="confirmed" domain="[('state', '=', 'confirmed')]"/>
+                    <filter string="Waiting Manager" name="waiting_manager" domain="[('state', '=', 'confirmed')]"/>
+                    <filter string="Waiting Director" name="waiting_director" domain="[('state', '=', 'manager_approved')]"/>
+                    <filter string="Done" name="done" domain="[('state', 'in', ['done', 'director_approved'])]"/>
+                    <filter string="Assigned" name="assigned" domain="[('state', '=', 'assigned')]"/>
+                    <filter string="Refused" name="refused" domain="[('state', '=', 'refused')]"/>
+                    <separator/>
+                    <filter string="Urgent" name="urgent" domain="[('priority', 'in', ['2', '3'])]"/>
+                    <filter string="Overdue" name="overdue" domain="[('is_overdue', '=', True)]"/>
+                    <separator/>
+                    <group>
+                        <filter string="Department" name="group_department" context="{'group_by':'department'}"/>
+                        <filter string="Status" name="group_state" context="{'group_by':'state'}"/>
+                        <filter string="Category" name="group_category" context="{'group_by':'category_id'}"/>
+                        <filter string="Request Date" name="group_date" context="{'group_by':'request_date:month'}"/>
+                        <filter string="Priority" name="group_priority" context="{'group_by':'priority'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!--                         FORM VIEW                            -->
+        <!-- ============================================================ -->
+        <record id="equipment_request" model="ir.ui.view">
+            <field name="name">equipment.request.form</field>
+            <field name="model">equipment.request</field>
+            <field name="arch" type="xml">
+                <form string="Equipment Request" class="o_equipment_request_form">
+                    <header>
+                        <!-- Draft → Confirmed (Employee) -->
+                        <button string="✓ Confirm Request"
+                                name="action_confirm"
+                                type="object"
+                                class="oe_highlight"
+                                invisible="state != 'draft'"
+                                data-hotkey="q"/>
+                        <!-- Confirmed → Manager Approved -->
+                        <button string="👤 Manager Approve"
+                                name="action_manager_approve"
+                                type="object"
+                                class="oe_highlight"
+                                invisible="state != 'confirmed'"
+                                data-hotkey="w"/>
+                        <!-- Manager Approved → Director Approved -->
+                        <button string="👔 Director Approve"
+                                name="action_director_approve"
+                                type="object"
+                                class="oe_highlight"
+                                invisible="state != 'manager_approved'"
+                                data-hotkey="e"/>
+                        <!-- Director Approved → Done -->
+                        <button string="✅ Mark as Done"
+                                name="action_done"
+                                type="object"
+                                class="oe_highlight"
+                                invisible="state != 'director_approved'"
+                                data-hotkey="r"/>
+                        <!-- Done → Assigned -->
+                        <button string="📦 Assign Equipment"
+                                name="action_assign"
+                                type="object"
+                                class="btn-primary"
+                                invisible="state != 'done'"
+                                data-hotkey="t"/>
+                        <!-- Assigned → Returned -->
+                        <button string="↩ Return Equipment"
+                                name="action_return"
+                                type="object"
+                                class="btn-warning"
+                                invisible="state != 'assigned'"
+                                data-hotkey="y"/>
+                        <!-- Refuse (any pending state) -->
+                        <button string="✗ Refuse"
+                                name="action_refuse"
+                                type="object"
+                                class="btn-secondary"
+                                invisible="state not in ('confirmed', 'manager_approved')"
+                                data-hotkey="x"/>
+                        <!-- Reset -->
+                        <button string="↺ Reset to Draft"
+                                name="action_reset_draft"
+                                type="object"
+                                class="btn-secondary"
+                                invisible="state not in ('refused', 'returned')"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,confirmed,manager_approved,director_approved,done,assigned"/>
+                    </header>
+                    <sheet>
+                        <!-- ===== Alert Banners ===== -->
+                        <div class="eq_alert_banner eq_alert_overdue"
+                             invisible="not is_overdue">
+                            <i class="fa fa-exclamation-triangle"/>
+                            <span><b>⚠ Overdue!</b> This request has passed its deadline. Please take action immediately.</span>
+                        </div>
+                        <div class="eq_alert_banner eq_alert_refused"
+                             invisible="state != 'refused'">
+                            <i class="fa fa-ban"/>
+                            <span><b>✗ Refused</b> — This request has been rejected.
+                            </span>
+                            <span invisible="not refuse_reason"> Reason: <field name="refuse_reason" readonly="1" nolabel="1"/></span>
+                        </div>
+                        <div class="eq_alert_banner eq_alert_assigned"
+                             invisible="state != 'assigned'">
+                            <i class="fa fa-truck"/>
+                            <span><b>✓ Equipment Assigned</b> — Equipment has been delivered to the employee.</span>
+                        </div>
+                        <div class="eq_alert_banner eq_alert_returned"
+                             invisible="state != 'returned'">
+                            <i class="fa fa-undo"/>
+                            <span><b>↩ Equipment Returned</b> — This request cycle is complete.</span>
+                        </div>
+
+                        <!-- ===== Approval Timeline ===== -->
+                        <div class="eq_approval_timeline"
+                             invisible="state == 'refused'">
+                            <!-- Step 1: Draft -->
+                            <div t-attf-class="eq_timeline_step #{state == 'draft' ? 'eq_step_active' : 'eq_step_done'}">
+                                <div class="eq_step_icon">
+                                    <i t-attf-class="fa #{state == 'draft' ? 'fa-pencil' : 'fa-check'}"/>
+                                </div>
+                                <span class="eq_step_label">Draft</span>
+                            </div>
+                            <div t-attf-class="eq_timeline_connector #{state != 'draft' ? 'eq_connector_done' : ''}"/>
+
+                            <!-- Step 2: Confirmed -->
+                            <div t-attf-class="eq_timeline_step #{state == 'confirmed' ? 'eq_step_active' : state != 'draft' &amp;&amp; state != 'confirmed' ? 'eq_step_done' : ''}">
+                                <div class="eq_step_icon">
+                                    <i t-attf-class="fa #{state == 'confirmed' ? 'fa-paper-plane' : state != 'draft' &amp;&amp; state != 'confirmed' ? 'fa-check' : 'fa-paper-plane'}"/>
+                                </div>
+                                <span class="eq_step_label">Confirmed</span>
+                            </div>
+                            <div t-attf-class="eq_timeline_connector #{['manager_approved', 'director_approved', 'done', 'assigned', 'returned'].includes(state) ? 'eq_connector_done' : state == 'confirmed' ? 'eq_connector_active' : ''}"/>
+
+                            <!-- Step 3: Manager -->
+                            <div t-attf-class="eq_timeline_step #{state == 'manager_approved' ? 'eq_step_active' : ['director_approved', 'done', 'assigned', 'returned'].includes(state) ? 'eq_step_done' : ''}">
+                                <div class="eq_step_icon">
+                                    <i t-attf-class="fa #{['director_approved', 'done', 'assigned', 'returned'].includes(state) ? 'fa-check' : 'fa-user'}"/>
+                                </div>
+                                <span class="eq_step_label">Manager</span>
+                            </div>
+                            <div t-attf-class="eq_timeline_connector #{['director_approved', 'done', 'assigned', 'returned'].includes(state) ? 'eq_connector_done' : state == 'manager_approved' ? 'eq_connector_active' : ''}"/>
+
+                            <!-- Step 4: Director -->
+                            <div t-attf-class="eq_timeline_step #{state == 'director_approved' ? 'eq_step_active' : ['done', 'assigned', 'returned'].includes(state) ? 'eq_step_done' : ''}">
+                                <div class="eq_step_icon">
+                                    <i t-attf-class="fa #{['done', 'assigned', 'returned'].includes(state) ? 'fa-check' : 'fa-briefcase'}"/>
+                                </div>
+                                <span class="eq_step_label">Director</span>
+                            </div>
+                            <div t-attf-class="eq_timeline_connector #{['done', 'assigned', 'returned'].includes(state) ? 'eq_connector_done' : state == 'director_approved' ? 'eq_connector_active' : ''}"/>
+
+                            <!-- Step 5: Done -->
+                            <div t-attf-class="eq_timeline_step #{state == 'done' ? 'eq_step_active' : ['assigned', 'returned'].includes(state) ? 'eq_step_done' : ''}">
+                                <div class="eq_step_icon">
+                                    <i t-attf-class="fa #{['assigned', 'returned'].includes(state) ? 'fa-check' : 'fa-check-circle'}"/>
+                                </div>
+                                <span class="eq_step_label">Done</span>
+                            </div>
+                            <div t-attf-class="eq_timeline_connector #{['assigned', 'returned'].includes(state) ? 'eq_connector_done' : state == 'done' ? 'eq_connector_active' : ''}"/>
+
+                            <!-- Step 6: Assigned -->
+                            <div t-attf-class="eq_timeline_step #{state == 'assigned' ? 'eq_step_active' : state == 'returned' ? 'eq_step_done' : ''}">
+                                <div class="eq_step_icon">
+                                    <i t-attf-class="fa #{state == 'returned' ? 'fa-check' : 'fa-truck'}"/>
+                                </div>
+                                <span class="eq_step_label">Assigned</span>
+                            </div>
+                        </div>
+
+                        <!-- ===== Smart Buttons ===== -->
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" icon="fa-history"
+                                    name="action_view_previous_requests"
+                                    type="object"
+                                    invisible="previous_request_count == 0">
+                                <field name="previous_request_count" widget="statinfo" string="History"/>
+                            </button>
+                            <button class="oe_stat_button" icon="fa-list"
+                                    type="object"
+                                    name="action_view_previous_requests"
+                                    invisible="line_count == 0">
+                                <field name="line_count" widget="statinfo" string="Items"/>
+                            </button>
+                        </div>
+                        <field name="pet_image" widget="image" class="oe_avatar"
+                               options="{'preview_image': 'pet_image'}"/>
+                        <div class="oe_title">
+                            <h1><field name="name" readonly="1"/></h1>
+                            <h2>
+                                <field name="employee_name" placeholder="Employee Name..."
+                                       readonly="state != 'draft'"/>
+                            </h2>
+                        </div>
+                        <group>
+                            <group string="📋 Request Details">
+                                <field name="equipment_name" readonly="state != 'draft'"/>
+                                <field name="category_id" readonly="state != 'draft'"/>
+                                <field name="quantity" readonly="state != 'draft'"/>
+                                <field name="total_quantity"/>
+                                <field name="department" readonly="state != 'draft'"/>
+                                <field name="gender" readonly="state != 'draft'"/>
+                            </group>
+                            <group string="📅 Schedule &amp; Cost">
+                                <field name="request_date" readonly="state != 'draft'"/>
+                                <field name="deadline" readonly="state != 'draft'"
+                                       decoration-danger="is_overdue"/>
+                                <field name="estimated_cost" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       readonly="state != 'draft'"/>
+                                <field name="total_cost" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       invisible="total_cost == 0"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="priority" widget="priority"/>
+                            </group>
+                        </group>
+
+                        <!-- Hidden fields for conditional rendering -->
+                        <field name="is_overdue" invisible="1"/>
+                        <field name="progress" invisible="1"/>
+
+                        <notebook>
+                            <page string="📦 Equipment Lines" name="lines">
+                                <field name="line_ids" readonly="state != 'draft'">
+                                    <list editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="description"/>
+                                        <field name="quantity"/>
+                                        <field name="unit_price"/>
+                                        <field name="subtotal" sum="Total"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="✓ Approval Info" name="approval">
+                                <group>
+                                    <group string="Approval Chain">
+                                        <field name="confirmed_date" readonly="1"/>
+                                        <field name="manager_id" readonly="1"/>
+                                        <field name="manager_approved_date" readonly="1"/>
+                                        <field name="director_id" readonly="1"/>
+                                        <field name="director_approved_date" readonly="1"/>
+                                    </group>
+                                    <group string="Rejection Info">
+                                        <field name="refused_by" readonly="1"/>
+                                        <field name="refused_date" readonly="1"/>
+                                        <field name="refuse_reason"
+                                               readonly="state != 'confirmed' and state != 'manager_approved'"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="🚚 Assignment &amp; Return" name="assignment"
+                                  invisible="state not in ('done', 'assigned', 'returned')">
+                                <group>
+                                    <group string="Assignment">
+                                        <field name="assigned_date" readonly="1"/>
+                                    </group>
+                                    <group string="Return">
+                                        <field name="return_date" readonly="1"/>
+                                        <field name="return_condition"
+                                               readonly="state == 'returned'"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="📝 Notes" name="notes">
+                                <field name="note" placeholder="Manager notes..."/>
+                                <field name="description" placeholder="Detailed description..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!--                         LIST VIEW                            -->
+        <!-- ============================================================ -->
+        <record id="equipment_request_list" model="ir.ui.view">
+            <field name="name">equipment.request.list</field>
+            <field name="model">equipment.request</field>
+            <field name="arch" type="xml">
+                <list string="Equipment Requests"
+                      default_order="priority desc, create_date desc"
+                      decoration-info="state == 'draft'"
+                      decoration-primary="state == 'confirmed'"
+                      decoration-warning="state in ('manager_approved',)"
+                      decoration-success="state in ('director_approved', 'done', 'assigned')"
+                      decoration-muted="state == 'returned'"
+                      decoration-danger="state == 'refused'"
+                      multi_edit="1"
+                      sample="1">
+                    <field name="name" decoration-bf="1"/>
+                    <field name="employee_name"/>
+                    <field name="equipment_name"/>
+                    <field name="category_id" optional="show"/>
+                    <field name="department" optional="show"/>
+                    <field name="quantity"/>
+                    <field name="estimated_cost" widget="monetary" optional="show"/>
+                    <field name="request_date"/>
+                    <field name="deadline" optional="show"
+                           decoration-danger="is_overdue"/>
+                    <field name="progress" widget="progressbar" optional="show"/>
+                    <field name="priority" widget="priority" optional="show"/>
+                    <field name="state" widget="badge"
+                           decoration-info="state == 'draft'"
+                           decoration-primary="state == 'confirmed'"
+                           decoration-warning="state == 'manager_approved'"
+                           decoration-success="state in ('director_approved', 'done', 'assigned')"
+                           decoration-danger="state == 'refused'"/>
+                    <field name="activity_ids" widget="list_activity" optional="show"/>
+                    <field name="is_overdue" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!--                        KANBAN VIEW                           -->
+        <!-- ============================================================ -->
+        <record id="view_equipment_request_kanban" model="ir.ui.view">
+            <field name="name">equipment.request.kanban</field>
+            <field name="model">equipment.request</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="state"
+                        records_draggable="false"
+                        sample="1"
+                        class="o_equipment_request_kanban">
+                    <field name="state"/>
+                    <field name="priority"/>
+                    <field name="estimated_cost"/>
+                    <field name="progress"/>
+                    <field name="is_overdue"/>
+                    <field name="deadline"/>
+                    <field name="pet_image"/>
+                    <field name="kanban_color"/>
+                    <templates>
+                        <t t-name="card" t-attf-class="eq_state_#{record.state.raw_value}">
+                            <!-- Header: Priority + Reference + Avatar -->
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <field name="priority" widget="priority" class="me-1"/>
+                                <field name="name" class="fw-bold fs-5 flex-grow-1"/>
+                                <field name="pet_image" widget="image" class="oe_avatar rounded-circle"
+                                       options="{'size': [32, 32]}" invisible="not pet_image"
+                                       style="width: 32px; height: 32px; object-fit: cover;"/>
+                            </div>
+
+                            <!-- Employee & Equipment -->
+                            <div class="mb-1 text-muted">
+                                <i class="fa fa-user me-1"/> <field name="employee_name"/>
+                            </div>
+                            <div class="mb-1">
+                                <i class="fa fa-wrench me-1 text-muted"/> <field name="equipment_name"/>
+                            </div>
+
+                            <!-- Cost -->
+                            <div t-if="record.estimated_cost.raw_value" class="mb-1">
+                                <i class="fa fa-money me-1 text-muted"/>
+                                <span class="eq_cost_display"><field name="estimated_cost" widget="monetary"/></span>
+                            </div>
+
+                            <!-- Overdue Warning -->
+                            <div t-if="record.is_overdue.raw_value" class="mb-1">
+                                <span class="eq_overdue_badge">
+                                    <i class="fa fa-exclamation-triangle"/> Overdue
+                                </span>
+                            </div>
+
+                            <!-- Deadline -->
+                            <div t-if="record.deadline.raw_value and !record.is_overdue.raw_value" class="mb-1 text-muted small">
+                                <i class="fa fa-calendar me-1"/> Deadline: <field name="deadline"/>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div class="eq_progress_bar">
+                                <div t-attf-class="eq_progress_fill eq_progress_#{record.progress.raw_value == 10 ? '10' : record.progress.raw_value == 25 ? '25' : record.progress.raw_value == 50 ? '50' : record.progress.raw_value == 75 ? '75' : record.progress.raw_value == 85 ? '85' : '100'}"/>
+                            </div>
+
+                            <!-- Footer: Department + Category badges -->
+                            <footer class="pt-2 mt-auto d-flex gap-1 flex-wrap">
+                                <field name="department" widget="badge"/>
+                                <field name="category_id" widget="badge"
+                                       invisible="not category_id"/>
+                            </footer>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!--                       CALENDAR VIEW                          -->
+        <!-- ============================================================ -->
+        <record id="view_equipment_request_calendar" model="ir.ui.view">
+            <field name="name">equipment.request.calendar</field>
+            <field name="model">equipment.request</field>
+            <field name="arch" type="xml">
+                <calendar string="Equipment Request Deadlines"
+                          date_start="request_date"
+                          date_stop="deadline"
+                          color="department"
+                          mode="month">
+                    <field name="name"/>
+                    <field name="employee_name"/>
+                    <field name="state"/>
+                </calendar>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!--                        GRAPH VIEW                            -->
+        <!-- ============================================================ -->
+        <record id="view_equipment_request_graph" model="ir.ui.view">
+            <field name="name">equipment.request.graph</field>
+            <field name="model">equipment.request</field>
+            <field name="arch" type="xml">
+                <graph string="Equipment Requests Analysis" sample="1">
+                    <field name="department"/>
+                    <field name="estimated_cost" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!--                        PIVOT VIEW                            -->
+        <!-- ============================================================ -->
+        <record id="view_equipment_request_pivot" model="ir.ui.view">
+            <field name="name">equipment.request.pivot</field>
+            <field name="model">equipment.request</field>
+            <field name="arch" type="xml">
+                <pivot string="Equipment Request Analysis" sample="1">
+                    <field name="department" type="row"/>
+                    <field name="state" type="col"/>
+                    <field name="estimated_cost" type="measure"/>
+                    <field name="quantity" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!--                     ACTION & MENUS                           -->
+        <!-- ============================================================ -->
+        <record id="action_equipment_request" model="ir.actions.act_window">
+            <field name="name">Equipment Requests</field>
+            <field name="res_model">equipment.request</field>
+            <field name="view_mode">kanban,list,form,calendar,pivot,graph</field>
+            <field name="search_view_id" ref="view_equipment_request_search"/>
+            <field name="context">{'search_default_my_requests': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first Equipment Request!
+                </p>
+                <p>Submit requests for equipment and track their multi-level approval.</p>
+            </field>
+        </record>
+
+        <!-- Root Menu (App Switcher) -->
+        <menuitem id="menu_equipment_request_root"
+                  name="Equipment Request"
+                  action="action_equipment_dashboard"
+                  web_icon="equipment_request,static/description/icon.png"
+                  sequence="4"/>
+
+        <!-- Sub-Menus: Requests -->
+        <menuitem id="menu_equipment_requests"
+                  name="Requests"
+                  parent="menu_equipment_request_root"
+                  sequence="1"/>
+        <menuitem id="menu_equipment_request"
+                  name="Equipment Requests"
+                  parent="menu_equipment_requests"
+                  action="action_equipment_request"
+                  sequence="1"/>
+
+        <!-- Sub-Menus: Configuration -->
+        <menuitem id="menu_equipment_config"
+                  name="Configuration"
+                  parent="menu_equipment_request_root"
+                  sequence="10"/>
+    </data>
+</odoo>

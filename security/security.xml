@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!--                    SECURITY GROUPS                           -->
+    <!-- ============================================================ -->
+    <record id="group_equipment_user" model="res.groups">
+        <field name="name">Equipment User</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="group_equipment_manager" model="res.groups">
+        <field name="name">Equipment Manager</field>
+        <field name="implied_ids" eval="[(4, ref('group_equipment_user'))]"/>
+    </record>
+
+    <record id="group_equipment_director" model="res.groups">
+        <field name="name">Equipment Director</field>
+        <field name="implied_ids" eval="[(4, ref('group_equipment_manager'))]"/>
+    </record>
+
+    <!-- Cấp quyền Director cho Admin -->
+    <record id="base.user_admin" model="res.users">
+        <field name="groups_id" eval="[(4, ref('group_equipment_director'))]"/>
+    </record>
+    <record id="base.user_root" model="res.users">
+        <field name="groups_id" eval="[(4, ref('group_equipment_director'))]"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                      RECORD RULES                            -->
+    <!-- ============================================================ -->
+    <!-- User chỉ thấy yêu cầu của mình -->
+    <record id="equipment_request_rule_user" model="ir.rule">
+        <field name="name">Equipment Request: User sees own</field>
+        <field name="model_id" ref="model_equipment_request"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_equipment_user'))]"/>
+    </record>
+
+    <!-- Manager thấy tất cả -->
+    <record id="equipment_request_rule_manager" model="ir.rule">
+        <field name="name">Equipment Request: Manager sees all</field>
+        <field name="model_id" ref="model_equipment_request"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_equipment_manager'))]"/>
+    </record>
+</odoo>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="action_exam_report" model="ir.actions.report">
+            <field name="name">Exam Report</field>
+            <field name="model">student.exam</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">equipment_request.exam_report_template</field>
+            <field name="report_file">equipment_request.exam_report_template</field>
+            <field name="binding_model_id" ref="model_student_exam"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

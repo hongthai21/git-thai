@@ -1,0 +1,391 @@
+// ============================================================
+// Equipment Request Module — Premium UI Styling
+// ============================================================
+
+// === Color Palette ===
+$eq-primary: #7C3AED;      // Violet
+$eq-secondary: #2563EB;    // Blue
+$eq-success: #059669;      // Emerald
+$eq-warning: #D97706;      // Amber
+$eq-danger: #DC2626;       // Red
+$eq-info: #0891B2;         // Cyan
+$eq-muted: #6B7280;        // Gray
+
+// === Kanban Card Styles ===
+.o_equipment_request_kanban {
+
+    .o_kanban_renderer {
+        gap: 16px;
+    }
+
+    .o_kanban_record {
+        border-radius: 12px !important;
+        border: none !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.15), 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .o_kanban_record_top {
+            border: none;
+        }
+    }
+
+    // State-based left border accents
+    .eq_state_draft {
+        border-left: 4px solid $eq-info !important;
+    }
+    .eq_state_confirmed {
+        border-left: 4px solid $eq-secondary !important;
+    }
+    .eq_state_manager_approved {
+        border-left: 4px solid $eq-warning !important;
+    }
+    .eq_state_director_approved {
+        border-left: 4px solid $eq-success !important;
+    }
+    .eq_state_done {
+        border-left: 4px solid $eq-success !important;
+    }
+    .eq_state_assigned {
+        border-left: 4px solid #10B981 !important;
+    }
+    .eq_state_returned {
+        border-left: 4px solid $eq-muted !important;
+    }
+    .eq_state_refused {
+        border-left: 4px solid $eq-danger !important;
+    }
+
+    // Progress bar in kanban
+    .eq_progress_bar {
+        height: 6px;
+        border-radius: 3px;
+        background-color: #E5E7EB;
+        overflow: hidden;
+        margin-top: 8px;
+
+        .eq_progress_fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.6s ease;
+
+            &.eq_progress_10 { width: 14%; background: linear-gradient(90deg, $eq-info, lighten($eq-info, 10%)); }
+            &.eq_progress_25 { width: 28%; background: linear-gradient(90deg, $eq-secondary, lighten($eq-secondary, 10%)); }
+            &.eq_progress_50 { width: 50%; background: linear-gradient(90deg, $eq-warning, lighten($eq-warning, 10%)); }
+            &.eq_progress_75 { width: 71%; background: linear-gradient(90deg, #8B5CF6, lighten(#8B5CF6, 10%)); }
+            &.eq_progress_85 { width: 85%; background: linear-gradient(90deg, $eq-success, lighten($eq-success, 10%)); }
+            &.eq_progress_100 { width: 100%; background: linear-gradient(90deg, $eq-success, #34D399); }
+        }
+    }
+
+    // Overdue indicator
+    .eq_overdue_badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        background-color: #FEE2E2;
+        color: $eq-danger;
+        animation: eq_pulse 2s infinite;
+    }
+
+    // Cost display
+    .eq_cost_display {
+        font-weight: 700;
+        color: $eq-primary;
+        font-size: 1.05em;
+    }
+}
+
+// === Form View Styles ===
+.o_equipment_request_form {
+
+    // Approval timeline
+    .eq_approval_timeline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 24px;
+        margin-bottom: 16px;
+        background: linear-gradient(135deg, #F8FAFC, #EFF6FF);
+        border-radius: 12px;
+        border: 1px solid #E2E8F0;
+
+        .eq_timeline_step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 1;
+
+            .eq_step_icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+                font-weight: 700;
+                margin-bottom: 6px;
+                transition: all 0.3s ease;
+                z-index: 2;
+
+                // Default (pending)
+                background-color: #E5E7EB;
+                color: #9CA3AF;
+                border: 2px solid #D1D5DB;
+            }
+
+            .eq_step_label {
+                font-size: 11px;
+                font-weight: 600;
+                color: #6B7280;
+                text-align: center;
+                white-space: nowrap;
+            }
+
+            // Active step
+            &.eq_step_active .eq_step_icon {
+                background: linear-gradient(135deg, $eq-primary, $eq-secondary);
+                color: white;
+                border-color: $eq-primary;
+                box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2);
+                animation: eq_step_pulse 2s infinite;
+            }
+            &.eq_step_active .eq_step_label {
+                color: $eq-primary;
+                font-weight: 700;
+            }
+
+            // Completed step
+            &.eq_step_done .eq_step_icon {
+                background: linear-gradient(135deg, $eq-success, #34D399);
+                color: white;
+                border-color: $eq-success;
+            }
+            &.eq_step_done .eq_step_label {
+                color: $eq-success;
+            }
+
+            // Refused step
+            &.eq_step_refused .eq_step_icon {
+                background: linear-gradient(135deg, $eq-danger, #F87171);
+                color: white;
+                border-color: $eq-danger;
+            }
+        }
+
+        // Connector line between steps
+        .eq_timeline_connector {
+            flex: 2;
+            height: 3px;
+            background-color: #E5E7EB;
+            margin: 0 -8px;
+            margin-bottom: 20px;
+            position: relative;
+
+            &.eq_connector_done {
+                background: linear-gradient(90deg, $eq-success, #34D399);
+            }
+            &.eq_connector_active {
+                background: linear-gradient(90deg, $eq-success, $eq-primary);
+            }
+        }
+    }
+
+    // Alert banners
+    .eq_alert_banner {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-weight: 500;
+        margin-bottom: 12px;
+
+        .fa {
+            font-size: 18px;
+        }
+
+        &.eq_alert_overdue {
+            background-color: #FEF3C7;
+            border: 1px solid #F59E0B;
+            color: #92400E;
+        }
+
+        &.eq_alert_refused {
+            background-color: #FEE2E2;
+            border: 1px solid #EF4444;
+            color: #991B1B;
+        }
+
+        &.eq_alert_returned {
+            background-color: #E0E7FF;
+            border: 1px solid #6366F1;
+            color: #3730A3;
+        }
+
+        &.eq_alert_assigned {
+            background-color: #D1FAE5;
+            border: 1px solid #10B981;
+            color: #065F46;
+        }
+    }
+}
+
+// === Dashboard Kanban ===
+.o_equipment_dashboard_kanban {
+
+    .o_kanban_record {
+        border-radius: 16px !important;
+        border: none !important;
+        overflow: hidden;
+        transition: all 0.3s ease;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+        }
+    }
+
+    .eq_dashboard_card {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        min-height: 120px;
+
+        .eq_dash_icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .eq_dash_number {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .eq_dash_label {
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        // Card variants
+        &.eq_dash_total {
+            background: linear-gradient(135deg, #7C3AED, #4F46E5);
+            color: white;
+            .eq_dash_icon { background-color: rgba(255, 255, 255, 0.2); }
+        }
+        &.eq_dash_pending {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
+            .eq_dash_icon { background-color: rgba(255, 255, 255, 0.2); }
+        }
+        &.eq_dash_approved {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            .eq_dash_icon { background-color: rgba(255, 255, 255, 0.2); }
+        }
+        &.eq_dash_overdue {
+            background: linear-gradient(135deg, #DC2626, #B91C1C);
+            color: white;
+            .eq_dash_icon { background-color: rgba(255, 255, 255, 0.2); }
+        }
+    }
+}
+
+// === Budget Progress Bar ===
+.eq_budget_progress {
+    .progress {
+        height: 10px;
+        border-radius: 5px;
+        background-color: #E5E7EB;
+    }
+    .progress-bar {
+        border-radius: 5px;
+        transition: width 0.6s ease;
+    }
+}
+
+// === Priority Animation ===
+.o_priority .o_priority_star.fa-star {
+    transition: transform 0.2s ease;
+    &:hover {
+        transform: scale(1.3);
+    }
+}
+
+// === Animations ===
+@keyframes eq_pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes eq_step_pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2); }
+    50% { box-shadow: 0 0 0 8px rgba(124, 58, 237, 0.1); }
+}
+
+// === PDF Report Print Styles ===
+.eq_report_header {
+    background: linear-gradient(135deg, #7C3AED, #2563EB);
+    color: white;
+    padding: 24px 32px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+}
+
+.eq_report_info_card {
+    background-color: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 8px;
+
+    .eq_info_label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748B;
+        margin-bottom: 4px;
+    }
+    .eq_info_value {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1E293B;
+    }
+}
+
+.eq_report_badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+
+    &.eq_badge_draft { background: #DBEAFE; color: #1E40AF; }
+    &.eq_badge_confirmed { background: #E0E7FF; color: #3730A3; }
+    &.eq_badge_manager_approved { background: #FEF3C7; color: #92400E; }
+    &.eq_badge_director_approved { background: #D1FAE5; color: #065F46; }
+    &.eq_badge_done { background: #D1FAE5; color: #065F46; }
+    &.eq_badge_assigned { background: #CCFBF1; color: #115E59; }
+    &.eq_badge_returned { background: #E5E7EB; color: #374151; }
+    &.eq_badge_refused { background: #FEE2E2; color: #991B1B; }
+}

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_equipment_request_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+                        <!-- ===== Report Header ===== -->
+                        <div style="background: linear-gradient(135deg, #7C3AED, #2563EB);
+                                    color: white;
+                                    padding: 28px 36px;
+                                    border-radius: 16px;
+                                    margin-bottom: 28px;
+                                    position: relative;
+                                    overflow: hidden;">
+                            <div style="position: absolute; right: -40px; top: -40px;
+                                        width: 160px; height: 160px;
+                                        background: rgba(255, 255, 255, 0.08);
+                                        border-radius: 50%;"/>
+                            <div style="position: absolute; right: 60px; bottom: -60px;
+                                        width: 120px; height: 120px;
+                                        background: rgba(255, 255, 255, 0.05);
+                                        border-radius: 50%;"/>
+                            <h1 style="margin: 0 0 6px 0; font-size: 28px; font-weight: 700; letter-spacing: 0.5px;">
+                                Equipment Request Report
+                            </h1>
+                            <div style="font-size: 16px; opacity: 0.9; margin-bottom: 12px;">
+                                <span t-field="doc.name" style="font-weight: 600; font-size: 20px;"/>
+                            </div>
+                            <div style="display: inline-block; padding: 4px 16px;
+                                        border-radius: 20px; font-size: 13px; font-weight: 600;
+                                        background: rgba(255, 255, 255, 0.2);">
+                                <span t-field="doc.state"/>
+                            </div>
+                        </div>
+
+                        <!-- ===== Key Info Grid ===== -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+                            <!-- Employee -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px;">
+                                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #64748B; margin-bottom: 4px;">
+                                    👤 Employee
+                                </div>
+                                <div style="font-size: 16px; font-weight: 600; color: #1E293B;">
+                                    <span t-field="doc.employee_name"/>
+                                </div>
+                            </div>
+                            <!-- Equipment -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px;">
+                                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #64748B; margin-bottom: 4px;">
+                                    🔧 Equipment
+                                </div>
+                                <div style="font-size: 16px; font-weight: 600; color: #1E293B;">
+                                    <span t-field="doc.equipment_name"/>
+                                </div>
+                            </div>
+                            <!-- Department -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px;">
+                                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #64748B; margin-bottom: 4px;">
+                                    🏢 Department
+                                </div>
+                                <div style="font-size: 16px; font-weight: 600; color: #1E293B;">
+                                    <span t-field="doc.department"/>
+                                </div>
+                            </div>
+                            <!-- Category -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px;">
+                                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #64748B; margin-bottom: 4px;">
+                                    📂 Category
+                                </div>
+                                <div style="font-size: 16px; font-weight: 600; color: #1E293B;">
+                                    <span t-field="doc.category_id"/>
+                                </div>
+                            </div>
+                            <!-- Quantity -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px;">
+                                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #64748B; margin-bottom: 4px;">
+                                    📦 Quantity
+                                </div>
+                                <div style="font-size: 16px; font-weight: 600; color: #1E293B;">
+                                    <span t-field="doc.quantity"/>
+                                </div>
+                            </div>
+                            <!-- Cost -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px;">
+                                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #64748B; margin-bottom: 4px;">
+                                    💰 Estimated Cost
+                                </div>
+                                <div style="font-size: 16px; font-weight: 600; color: #7C3AED;">
+                                    <span t-field="doc.estimated_cost" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                </div>
+                            </div>
+                            <!-- Request Date -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px;">
+                                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #64748B; margin-bottom: 4px;">
+                                    📅 Request Date
+                                </div>
+                                <div style="font-size: 16px; font-weight: 600; color: #1E293B;">
+                                    <span t-field="doc.request_date"/>
+                                </div>
+                            </div>
+                            <!-- Deadline -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px;">
+                                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #64748B; margin-bottom: 4px;">
+                                    ⏰ Deadline
+                                </div>
+                                <div style="font-size: 16px; font-weight: 600; color: #1E293B;">
+                                    <span t-field="doc.deadline"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ===== Approval Timeline ===== -->
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="color: #7C3AED; font-size: 18px; font-weight: 700; margin-bottom: 16px; border-bottom: 2px solid #EDE9FE; padding-bottom: 8px;">
+                                ✓ Approval Chain
+                            </h3>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr style="border-bottom: 1px solid #E2E8F0;">
+                                    <td style="padding: 10px 16px; font-weight: 600; color: #475569; width: 40%;">Confirmed Date</td>
+                                    <td style="padding: 10px 16px; color: #1E293B;"><span t-field="doc.confirmed_date"/></td>
+                                </tr>
+                                <t t-if="doc.manager_id">
+                                    <tr style="border-bottom: 1px solid #E2E8F0;">
+                                        <td style="padding: 10px 16px; font-weight: 600; color: #475569;">Manager Approved By</td>
+                                        <td style="padding: 10px 16px; color: #1E293B;"><span t-field="doc.manager_id"/> — <span t-field="doc.manager_approved_date"/></td>
+                                    </tr>
+                                </t>
+                                <t t-if="doc.director_id">
+                                    <tr style="border-bottom: 1px solid #E2E8F0;">
+                                        <td style="padding: 10px 16px; font-weight: 600; color: #475569;">Director Approved By</td>
+                                        <td style="padding: 10px 16px; color: #1E293B;"><span t-field="doc.director_id"/> — <span t-field="doc.director_approved_date"/></td>
+                                    </tr>
+                                </t>
+                                <t t-if="doc.refused_by">
+                                    <tr style="border-bottom: 1px solid #E2E8F0; background: #FEF2F2;">
+                                        <td style="padding: 10px 16px; font-weight: 600; color: #DC2626;">Refused By</td>
+                                        <td style="padding: 10px 16px; color: #991B1B;">
+                                            <span t-field="doc.refused_by"/> — <span t-field="doc.refused_date"/>
+                                            <t t-if="doc.refuse_reason">
+                                                <br/><em>Reason: <span t-field="doc.refuse_reason"/></em>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </table>
+                        </div>
+
+                        <!-- ===== Equipment Lines ===== -->
+                        <t t-if="doc.line_ids">
+                            <h3 style="color: #7C3AED; font-size: 18px; font-weight: 700; margin-bottom: 16px; border-bottom: 2px solid #EDE9FE; padding-bottom: 8px;">
+                                📦 Equipment Lines
+                            </h3>
+                            <table style="width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden;">
+                                <thead>
+                                    <tr style="background: linear-gradient(135deg, #7C3AED, #6D28D9); color: white;">
+                                        <th style="padding: 12px 16px; text-align: left; font-weight: 600;">#</th>
+                                        <th style="padding: 12px 16px; text-align: left; font-weight: 600;">Product</th>
+                                        <th style="padding: 12px 16px; text-align: left; font-weight: 600;">Description</th>
+                                        <th style="padding: 12px 16px; text-align: right; font-weight: 600;">Qty</th>
+                                        <th style="padding: 12px 16px; text-align: right; font-weight: 600;">Unit Price</th>
+                                        <th style="padding: 12px 16px; text-align: right; font-weight: 600;">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.line_ids" t-as="line">
+                                        <tr t-attf-style="background: #{line_index % 2 == 0 and '#FFFFFF' or '#F8FAFC'}; border-bottom: 1px solid #E2E8F0;">
+                                            <td style="padding: 10px 16px;"><t t-esc="line_index + 1"/></td>
+                                            <td style="padding: 10px 16px; font-weight: 500;"><span t-field="line.product_id"/></td>
+                                            <td style="padding: 10px 16px; color: #64748B;"><span t-field="line.description"/></td>
+                                            <td style="padding: 10px 16px; text-align: right;"><span t-field="line.quantity"/></td>
+                                            <td style="padding: 10px 16px; text-align: right;"><span t-field="line.unit_price"/></td>
+                                            <td style="padding: 10px 16px; text-align: right; font-weight: 600; color: #7C3AED;"><span t-field="line.subtotal"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background: #EDE9FE; font-weight: 700;">
+                                        <td colspan="5" style="padding: 12px 16px; text-align: right; color: #5B21B6;">Total</td>
+                                        <td style="padding: 12px 16px; text-align: right; color: #5B21B6; font-size: 16px;">
+                                            <span t-field="doc.total_cost"/>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </t>
+
+                        <!-- ===== Manager Note ===== -->
+                        <t t-if="doc.note">
+                            <div style="margin-top: 24px; padding: 16px 20px;
+                                        background: #FFFBEB; border: 1px solid #FDE68A;
+                                        border-radius: 10px;">
+                                <h4 style="color: #92400E; font-size: 14px; font-weight: 700; margin: 0 0 8px 0;">
+                                    📝 Manager Note
+                                </h4>
+                                <p style="margin: 0; color: #78350F;"><span t-field="doc.note"/></p>
+                            </div>
+                        </t>
+
+                        <!-- ===== Footer Stamp ===== -->
+                        <div style="margin-top: 40px; text-align: center; color: #94A3B8; font-size: 11px;">
+                            <div style="border-top: 1px solid #E2E8F0; padding-top: 16px;">
+                                Generated on <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/> |
+                                Equipment Request Management System
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

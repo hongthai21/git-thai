@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Bulk Action Wizard Form -->
+        <record id="view_bulk_action_wizard_form" model="ir.ui.view">
+            <field name="name">equipment.bulk.action.wizard.form</field>
+            <field name="model">equipment.bulk.action.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Bulk Action">
+                    <group>
+                        <field name="action_type"/>
+                        <field name="refuse_reason"
+                               invisible="action_type != 'refuse'"
+                               required="action_type == 'refuse'"/>
+                    </group>
+                    <group string="Selected Requests">
+                        <field name="request_ids" nolabel="1" readonly="1">
+                            <list>
+                                <field name="name"/>
+                                <field name="employee_name"/>
+                                <field name="state" widget="badge"/>
+                            </list>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="action_apply"
+                                type="object"
+                                string="Apply"
+                                class="btn-primary"/>
+                        <button string="Cancel" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- Server Action bound to equipment.request -->
+        <record id="action_bulk_equipment_wizard" model="ir.actions.act_window">
+            <field name="name">Bulk Action</field>
+            <field name="res_model">equipment.bulk.action.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="equipment_request.model_equipment_request"/>
+            <field name="binding_view_types">list</field>
+        </record>
+    </data>
+</odoo>

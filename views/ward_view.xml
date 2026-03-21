@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="ward" model="ir.ui.view">
+            <field name="name">ward.form</field>
+            <field name="model">ward</field>
+            <field name="arch" type="xml">
+                <form string="Ward">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name" placeholder="Ward Name..."/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="district_id"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="ward_list" model="ir.ui.view">
+            <field name="name">ward.list</field>
+            <field name="model">ward</field>
+            <field name="arch" type="xml">
+                <list string="Wards" default_order="name">
+                    <field name="name"/>
+                    <field name="district_id"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_ward" model="ir.actions.act_window">
+            <field name="name">Wards</field>
+            <field name="res_model">ward</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="menu_ward"
+                  name="Wards"
+                  parent="menu_equipment_config"
+                  action="action_ward"
+                  sequence="3"/>
+    </data>
+</odoo>

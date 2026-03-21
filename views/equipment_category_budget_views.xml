@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- ============================================================ -->
+        <!--                   EQUIPMENT CATEGORY VIEWS                   -->
+        <!-- ============================================================ -->
+
+        <!-- Category Form -->
+        <record id="view_equipment_category_form" model="ir.ui.view">
+            <field name="name">equipment.category.form</field>
+            <field name="model">equipment.category</field>
+            <field name="arch" type="xml">
+                <form string="Equipment Category">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" icon="fa-tasks"
+                                    type="action" name="%(action_equipment_request)d"
+                                    context="{'search_default_category_id': id}"
+                                    invisible="request_count == 0">
+                                <field name="request_count" widget="statinfo" string="Requests"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1><field name="name" placeholder="Category Name..."/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code"/>
+                                <field name="parent_id"/>
+                            </group>
+                            <group>
+                                <field name="complete_name"/>
+                            </group>
+                        </group>
+                        <group string="Description">
+                            <field name="description" nolabel="1"/>
+                        </group>
+                        <group string="Sub Categories">
+                            <field name="child_ids" nolabel="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                </list>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Category List -->
+        <record id="view_equipment_category_list" model="ir.ui.view">
+            <field name="name">equipment.category.list</field>
+            <field name="model">equipment.category</field>
+            <field name="arch" type="xml">
+                <list string="Equipment Categories">
+                    <field name="complete_name"/>
+                    <field name="code"/>
+                    <field name="request_count" string="# Requests"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Category Search -->
+        <record id="view_equipment_category_search" model="ir.ui.view">
+            <field name="name">equipment.category.search</field>
+            <field name="model">equipment.category</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="code"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Category Action -->
+        <record id="action_equipment_category" model="ir.actions.act_window">
+            <field name="name">Equipment Categories</field>
+            <field name="res_model">equipment.category</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="menu_equipment_category"
+                  name="Equipment Categories"
+                  parent="menu_equipment_config"
+                  action="action_equipment_category"
+                  sequence="1"/>
+
+        <!-- ============================================================ -->
+        <!--                   DEPARTMENT BUDGET VIEWS                    -->
+        <!-- ============================================================ -->
+        <record id="view_department_budget_form" model="ir.ui.view">
+            <field name="name">department.budget.form</field>
+            <field name="model">department.budget</field>
+            <field name="arch" type="xml">
+                <form string="Department Budget">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="department"/></h1>
+                        </div>
+                        <group>
+                            <group string="💰 Budget Info">
+                                <field name="fiscal_year"/>
+                                <field name="total_budget" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                            <group string="📊 Usage">
+                                <field name="used_budget" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="remaining_budget" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       decoration-danger="remaining_budget &lt; 0"
+                                       decoration-success="remaining_budget &gt; 0"/>
+                            </group>
+                        </group>
+                        <!-- Visual Budget Usage -->
+                        <div class="eq_budget_progress mt-3 mb-3" style="padding: 0 16px;">
+                            <span class="o_form_label">Budget Usage</span>
+                            <field name="usage_percentage" widget="progressbar"/>
+                        </div>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_department_budget_list" model="ir.ui.view">
+            <field name="name">department.budget.list</field>
+            <field name="model">department.budget</field>
+            <field name="arch" type="xml">
+                <list string="Department Budgets" sample="1">
+                    <field name="department"/>
+                    <field name="fiscal_year"/>
+                    <field name="total_budget" widget="monetary"/>
+                    <field name="used_budget" widget="monetary"/>
+                    <field name="remaining_budget" widget="monetary"
+                           decoration-danger="remaining_budget &lt; 0"
+                           decoration-success="remaining_budget &gt; 0"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_department_budget" model="ir.actions.act_window">
+            <field name="name">Department Budgets</field>
+            <field name="res_model">department.budget</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="menu_department_budget"
+                  name="Department Budgets"
+                  parent="menu_equipment_config"
+                  action="action_department_budget"
+                  sequence="2"/>
+    </data>
+</odoo>
