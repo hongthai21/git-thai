@@ -215,6 +215,11 @@ class EquipmentRequest(models.Model):
         for rec in self:
             rec.kanban_color = color_map.get(rec.state, 0)
 
+    @api.model
+    def _group_expand_states(self, states, domain):
+        """Explicitly define valid Kanban columns to prevent stale DB values from creating invalid columns."""
+        return ['draft', 'confirmed', 'manager_approved', 'director_approved', 'done', 'assigned', 'returned', 'refused']
+
     # ==================== CRUD ====================
     @api.model_create_multi
     def create(self, vals_list):

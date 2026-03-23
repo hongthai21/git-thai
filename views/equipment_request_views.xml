@@ -132,58 +132,100 @@
                         </div>
 
                         <!-- ===== Approval Timeline ===== -->
-                        <div class="eq_approval_timeline"
-                             invisible="state == 'refused'">
-                            <!-- Step 1: Draft -->
-                            <div t-attf-class="eq_timeline_step #{state == 'draft' ? 'eq_step_active' : 'eq_step_done'}">
-                                <div class="eq_step_icon">
-                                    <i t-attf-class="fa #{state == 'draft' ? 'fa-pencil' : 'fa-check'}"/>
-                                </div>
+                        <div class="eq_approval_timeline" invisible="state == 'refused'">
+
+                            <!-- ── Step 1: Draft ── -->
+                            <div class="eq_timeline_step eq_step_active" invisible="state != 'draft'">
+                                <div class="eq_step_icon"><i class="fa fa-pencil"/></div>
                                 <span class="eq_step_label">Draft</span>
                             </div>
-                            <div t-attf-class="eq_timeline_connector #{state != 'draft' ? 'eq_connector_done' : ''}"/>
+                            <div class="eq_timeline_step eq_step_done" invisible="state == 'draft'">
+                                <div class="eq_step_icon"><i class="fa fa-check"/></div>
+                                <span class="eq_step_label">Draft</span>
+                            </div>
+                            <!-- Connector 1 -->
+                            <div class="eq_timeline_connector eq_connector_done" invisible="state == 'draft'"/>
+                            <div class="eq_timeline_connector" invisible="state != 'draft'"/>
 
-                            <!-- Step 2: Confirmed -->
-                            <div t-attf-class="eq_timeline_step #{state == 'confirmed' ? 'eq_step_active' : state != 'draft' &amp;&amp; state != 'confirmed' ? 'eq_step_done' : ''}">
-                                <div class="eq_step_icon">
-                                    <i t-attf-class="fa #{state == 'confirmed' ? 'fa-paper-plane' : state != 'draft' &amp;&amp; state != 'confirmed' ? 'fa-check' : 'fa-paper-plane'}"/>
-                                </div>
+                            <!-- ── Step 2: Confirmed ── -->
+                            <div class="eq_timeline_step" invisible="state != 'draft'">
+                                <div class="eq_step_icon"><i class="fa fa-paper-plane"/></div>
                                 <span class="eq_step_label">Confirmed</span>
                             </div>
-                            <div t-attf-class="eq_timeline_connector #{['manager_approved', 'director_approved', 'done', 'assigned', 'returned'].includes(state) ? 'eq_connector_done' : state == 'confirmed' ? 'eq_connector_active' : ''}"/>
+                            <div class="eq_timeline_step eq_step_active" invisible="state != 'confirmed'">
+                                <div class="eq_step_icon"><i class="fa fa-paper-plane"/></div>
+                                <span class="eq_step_label">Confirmed</span>
+                            </div>
+                            <div class="eq_timeline_step eq_step_done" invisible="state not in ('manager_approved','director_approved','done','assigned','returned')">
+                                <div class="eq_step_icon"><i class="fa fa-check"/></div>
+                                <span class="eq_step_label">Confirmed</span>
+                            </div>
+                            <!-- Connector 2 -->
+                            <div class="eq_timeline_connector eq_connector_done" invisible="state not in ('manager_approved','director_approved','done','assigned','returned')"/>
+                            <div class="eq_timeline_connector" invisible="state in ('manager_approved','director_approved','done','assigned','returned')"/>
 
-                            <!-- Step 3: Manager -->
-                            <div t-attf-class="eq_timeline_step #{state == 'manager_approved' ? 'eq_step_active' : ['director_approved', 'done', 'assigned', 'returned'].includes(state) ? 'eq_step_done' : ''}">
-                                <div class="eq_step_icon">
-                                    <i t-attf-class="fa #{['director_approved', 'done', 'assigned', 'returned'].includes(state) ? 'fa-check' : 'fa-user'}"/>
-                                </div>
+                            <!-- ── Step 3: Manager ── -->
+                            <div class="eq_timeline_step" invisible="state not in ('draft','confirmed')">
+                                <div class="eq_step_icon"><i class="fa fa-user"/></div>
                                 <span class="eq_step_label">Manager</span>
                             </div>
-                            <div t-attf-class="eq_timeline_connector #{['director_approved', 'done', 'assigned', 'returned'].includes(state) ? 'eq_connector_done' : state == 'manager_approved' ? 'eq_connector_active' : ''}"/>
+                            <div class="eq_timeline_step eq_step_active" invisible="state != 'manager_approved'">
+                                <div class="eq_step_icon"><i class="fa fa-user"/></div>
+                                <span class="eq_step_label">Manager</span>
+                            </div>
+                            <div class="eq_timeline_step eq_step_done" invisible="state not in ('director_approved','done','assigned','returned')">
+                                <div class="eq_step_icon"><i class="fa fa-check"/></div>
+                                <span class="eq_step_label">Manager</span>
+                            </div>
+                            <!-- Connector 3 -->
+                            <div class="eq_timeline_connector eq_connector_done" invisible="state not in ('director_approved','done','assigned','returned')"/>
+                            <div class="eq_timeline_connector" invisible="state in ('director_approved','done','assigned','returned')"/>
 
-                            <!-- Step 4: Director -->
-                            <div t-attf-class="eq_timeline_step #{state == 'director_approved' ? 'eq_step_active' : ['done', 'assigned', 'returned'].includes(state) ? 'eq_step_done' : ''}">
-                                <div class="eq_step_icon">
-                                    <i t-attf-class="fa #{['done', 'assigned', 'returned'].includes(state) ? 'fa-check' : 'fa-briefcase'}"/>
-                                </div>
+                            <!-- ── Step 4: Director ── -->
+                            <div class="eq_timeline_step" invisible="state not in ('draft','confirmed','manager_approved')">
+                                <div class="eq_step_icon"><i class="fa fa-briefcase"/></div>
                                 <span class="eq_step_label">Director</span>
                             </div>
-                            <div t-attf-class="eq_timeline_connector #{['done', 'assigned', 'returned'].includes(state) ? 'eq_connector_done' : state == 'director_approved' ? 'eq_connector_active' : ''}"/>
+                            <div class="eq_timeline_step eq_step_active" invisible="state != 'director_approved'">
+                                <div class="eq_step_icon"><i class="fa fa-briefcase"/></div>
+                                <span class="eq_step_label">Director</span>
+                            </div>
+                            <div class="eq_timeline_step eq_step_done" invisible="state not in ('done','assigned','returned')">
+                                <div class="eq_step_icon"><i class="fa fa-check"/></div>
+                                <span class="eq_step_label">Director</span>
+                            </div>
+                            <!-- Connector 4 -->
+                            <div class="eq_timeline_connector eq_connector_done" invisible="state not in ('done','assigned','returned')"/>
+                            <div class="eq_timeline_connector" invisible="state in ('done','assigned','returned')"/>
 
-                            <!-- Step 5: Done -->
-                            <div t-attf-class="eq_timeline_step #{state == 'done' ? 'eq_step_active' : ['assigned', 'returned'].includes(state) ? 'eq_step_done' : ''}">
-                                <div class="eq_step_icon">
-                                    <i t-attf-class="fa #{['assigned', 'returned'].includes(state) ? 'fa-check' : 'fa-check-circle'}"/>
-                                </div>
+                            <!-- ── Step 5: Done ── -->
+                            <div class="eq_timeline_step" invisible="state not in ('draft','confirmed','manager_approved','director_approved')">
+                                <div class="eq_step_icon"><i class="fa fa-check-circle"/></div>
                                 <span class="eq_step_label">Done</span>
                             </div>
-                            <div t-attf-class="eq_timeline_connector #{['assigned', 'returned'].includes(state) ? 'eq_connector_done' : state == 'done' ? 'eq_connector_active' : ''}"/>
+                            <div class="eq_timeline_step eq_step_active" invisible="state != 'done'">
+                                <div class="eq_step_icon"><i class="fa fa-check-circle"/></div>
+                                <span class="eq_step_label">Done</span>
+                            </div>
+                            <div class="eq_timeline_step eq_step_done" invisible="state not in ('assigned','returned')">
+                                <div class="eq_step_icon"><i class="fa fa-check"/></div>
+                                <span class="eq_step_label">Done</span>
+                            </div>
+                            <!-- Connector 5 -->
+                            <div class="eq_timeline_connector eq_connector_done" invisible="state not in ('assigned','returned')"/>
+                            <div class="eq_timeline_connector" invisible="state in ('assigned','returned')"/>
 
-                            <!-- Step 6: Assigned -->
-                            <div t-attf-class="eq_timeline_step #{state == 'assigned' ? 'eq_step_active' : state == 'returned' ? 'eq_step_done' : ''}">
-                                <div class="eq_step_icon">
-                                    <i t-attf-class="fa #{state == 'returned' ? 'fa-check' : 'fa-truck'}"/>
-                                </div>
+                            <!-- ── Step 6: Assigned ── -->
+                            <div class="eq_timeline_step" invisible="state not in ('draft','confirmed','manager_approved','director_approved','done')">
+                                <div class="eq_step_icon"><i class="fa fa-truck"/></div>
+                                <span class="eq_step_label">Assigned</span>
+                            </div>
+                            <div class="eq_timeline_step eq_step_active" invisible="state != 'assigned'">
+                                <div class="eq_step_icon"><i class="fa fa-truck"/></div>
+                                <span class="eq_step_label">Assigned</span>
+                            </div>
+                            <div class="eq_timeline_step eq_step_done" invisible="state != 'returned'">
+                                <div class="eq_step_icon"><i class="fa fa-check"/></div>
                                 <span class="eq_step_label">Assigned</span>
                             </div>
                         </div>
@@ -342,7 +384,6 @@
             <field name="model">equipment.request</field>
             <field name="arch" type="xml">
                 <kanban default_group_by="state"
-                        records_draggable="false"
                         sample="1"
                         class="o_equipment_request_kanban">
                     <field name="state"/>
